@@ -1,10 +1,11 @@
 import { Categories, Products, Themes } from '@/services/manageData_api';
-import { Flex, FormControl, Text } from '@chakra-ui/react';
-import { MutableRefObject, useRef, useState } from 'react';
-import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
-import { InputFilter } from './InputFilter';
-import { FilterItems } from './FilterItems';
-import { ProductList } from './ProductList';
+import { Flex } from '@chakra-ui/react';
+import { useState } from 'react';
+import { TabSelect } from './TabSelect';
+import { ProductList } from './ProductTab/ProductList';
+import { ProductTab } from './ProductTab/ProductTab';
+import { ThemeTab } from './ThemeTab/ThemeTab';
+import { CategoryTab } from './CategoryTab/CategoryTab';
 
 type ContentProps = {
     categories: Categories,
@@ -12,58 +13,22 @@ type ContentProps = {
     products: Products
 }
 
-type EditProductDataFilters = {
-    categoriesFilter: string,
-    themesFilter: string,
-}
+export type Tabs = "Themes" | "Categories" | "Products"
 
 export const Content = ({categories, themes, products}: ContentProps)=>{
-    const [productsFiltered, setProductsFiltered] = useState(products);
-    const searchBar = useRef<HTMLInputElement>();
-    const methods = useForm<EditProductDataFilters>();
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-    } = methods;
-
-    const filterProduct = (categoryId: string, themeId: string, inputFilterValue: string)=>{
-        let productsFiltered = products;
-        if(categoryId!="0"){
-            productsFiltered = productsFiltered.filter((product)=>(
-                product._category._id == categoryId
-            ))
-        }
-        if(themeId!="0"){
-            productsFiltered = productsFiltered.filter((product)=>(
-                product._theme._id == themeId
-            ))
-        }
-        if(inputFilterValue){
-            productsFiltered = productsFiltered.filter((product)=>(
-                product._name.toUpperCase().includes(inputFilterValue.toUpperCase())
-            ))
-        }
-        setProductsFiltered(productsFiltered);
-    }
-    const onChange: SubmitHandler<EditProductDataFilters> = async ({categoriesFilter, themesFilter}) => {
-        if(searchBar.current)
-            filterProduct(categoriesFilter, themesFilter, searchBar.current.value);
-    };
+    const [tabSelected, setTabSelected] = useState<Tabs>("Themes");
+    const [categoriesFilterDefault, setCategoriesFilterDefault] = useState("0");
+    const [themesFilterDefault, setThemesFilterDefault] = useState("0");
     return (
         <>
-            <Flex justifyContent="center" marginBottom="60px">
+            <Flex h="100%" flex={1} justifyContent="center" margin="60px 0px">
                 <Flex w="700px" direction="column">
-                    <Text textAlign="center" fontSize="40px" fontWeight="bold" marginBottom="20px">
-                        Lista de produtos
-                    </Text>
-                    <FormProvider {...methods}>
-                        <FormControl onChange={handleSubmit(onChange)}>
-                            <InputFilter title="Busque por produtos" searchBar={searchBar as MutableRefObject<HTMLInputElement>} />
-                            <FilterItems categories={categories} themes={themes} />
-                        </FormControl>
-                    </FormProvider>
-                    <ProductList products={productsFiltered} />
+                    <TabSelect tabSelected={tabSelected} setTabSelected={setTabSelected} />
+                    {
+                        tabSelected === "Themes" && <ThemeTab themes={themes} setTabSelected={setTabSelected} setThemesFilterDefault={setThemesFilterDefault} setCategoriesFilterDefault={setCategoriesFilterDefault} /> ||
+                        tabSelected === "Categories" && <CategoryTab categories={categories} setTabSelected={setTabSelected} setCategoriesFilterDefault={setCategoriesFilterDefault} setThemesFilterDefault={setThemesFilterDefault} />||
+                        tabSelected === "Products" && <ProductTab categories={categories} themes={themes} products={products} categoriesFilterDefault={categoriesFilterDefault} themesFilterDefault={themesFilterDefault} />
+                    } 
                 </Flex>
             </Flex>
         </>

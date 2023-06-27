@@ -1,7 +1,8 @@
-import { Button, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Stack, Text } from "@chakra-ui/react"
+import { Button, Flex, Link, Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay, Stack, Text } from "@chakra-ui/react"
 import { ProductImageCarousel } from "./ProductImageCarousel"
 import { Products } from "@/services/manageData_api"
 import { BsWhatsapp } from "react-icons/bs"
+import useCart from "@/hooks/cart/useCart"
 
 type ProductModalProps = {
     isOpen: boolean,  
@@ -10,6 +11,12 @@ type ProductModalProps = {
 }
 
 export const ProductModal = ({isOpen, onClose, product}: ProductModalProps) => {
+    const cart = useCart();
+
+    const addItemInCart = ()=>{
+        cart.addItem(product);
+    }
+
     return(
         <>
             <Modal isOpen={isOpen} onClose={onClose}>
@@ -28,14 +35,13 @@ export const ProductModal = ({isOpen, onClose, product}: ProductModalProps) => {
                                     <Text>Categoria: {product._category._name}</Text>
                                     <Text>Tema: {product._theme._name}</Text>
                                 </Stack>
-                                <Link href="https://wa.me/5515996746250" isExternal transition="ease-in-out 0.2s" _hover={{color: "whatsappHover"}}>
-                                    <Button h="100%" bgColor="footerBg" color="footerText" transition="ease-in-out .2s all" _hover={{bgColor: "footerBgHover"}}>
+                                <Flex>
+                                    <Button h="100%" bgColor="footerBg" color="footerText" transition="ease-in-out .2s all" _hover={{bgColor: "footerBgHover"}} onClick={addItemInCart}>
                                         <Stack direction="row" spacing={2} alignItems="center">
-                                            <Text>Negociar com o vendedor</Text>
-                                            <BsWhatsapp />
+                                            <Text>Adicionar ao carrinho</Text>
                                         </Stack>
                                     </Button>
-                                </Link>
+                                </Flex>
                             </Stack>
                         </Stack>
                     </ModalBody>

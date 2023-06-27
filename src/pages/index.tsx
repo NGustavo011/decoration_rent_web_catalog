@@ -4,7 +4,7 @@ import { Footer } from '@/components/Footer';
 import { Categories, Products, Themes, manageData_api } from '@/services/manageData_api';
 import { Content } from '@/components/content/Content';
 import { Flex } from '@chakra-ui/react';
-import { ProductImageCarousel } from '@/components/content/ProductImageCarousel';
+import { SideCart } from '@/components/cart/SideCart';
 
 type HomeProps = {
     categories: Categories,

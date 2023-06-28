@@ -27,14 +27,14 @@ const Home: NextPage<HomeProps> = ({categories, themes, products}: HomeProps) =>
 export default Home;
 
 const getAllCategories = async(): Promise<Categories>=>{
-    const response = await manageData_api.get('category');
+    const response = await manageData_api.get('category/active');
     if(response.status !==200 || !response.data)
         throw Error(response.data.message)
     return response.data;
 }
 
 const getAllThemes = async(): Promise<Themes>=>{
-    const response = await manageData_api.get('theme');
+    const response = await manageData_api.get('theme/active');
     if(response.status !==200 || !response.data)
         throw Error(response.data.message)
     return response.data;
